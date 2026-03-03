@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPP BR Peak Load by ITP Vintage</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-2.35.0.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #FFFFFF;
+      color: #1A1A1A;
+    }
+
+    .chart-wrapper {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      padding: 24px 24px 16px 24px;
+    }
+
+    /* === HEADER === */
+    .chart-header {
+      margin-bottom: 2px;
+    }
+    .chart-header h1 {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 21px;
+      font-weight: 700;
+      line-height: 1.3;
+      color: #1A1A1A;
+      margin: 0;
+    }
+    .chart-header h1 b {
+      font-weight: 800;
+    }
+    .chart-subheader {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: #808080;
+      margin-top: 6px;
+      line-height: 1.3;
+    }
+
+    /* === CHART === */
+    #chart {
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+    }
+
+    /* === FOOTER === */
+    .chart-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-top: 10px;
+      gap: 16px;
+    }
+    .chart-footer-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      flex: 1;
+    }
+    .chart-source {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      color: #AAAAAA;
+      line-height: 1.4;
+    }
+    .chart-note {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      color: #AAAAAA;
+      line-height: 1.4;
+    }
+    .chart-wordmark {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: #1A1A1A;
+      letter-spacing: 0.25em;
+      white-space: nowrap;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <div class="chart-wrapper">
+    <!-- Header: key finding with <b> bold terms -->
+    <div class="chart-header">
+      <h1>SPP's 10-year peak forecast has risen <b>27%</b> in four ITP cycles, reaching <b>75 GW</b> by 2035</h1>
+      <div class="chart-subheader">Base reliability peak load by ITP vintage (GW)</div>
+    </div>
+
+    <!-- Plotly chart area -->
+    <div id="chart"></div>
+
+    <!-- Footer: source + notes on left, wordmark on right -->
+    <div class="chart-footer">
+      <div class="chart-footer-left">
+        <div class="chart-source">Source: SPP 2025 ITP Assessment Report, Figure 3.7, p94; Modo Energy</div>
+        <div class="chart-note">Note: Each line shows the BR peak load forecast from one ITP cycle. Dashed reference line marks the August 2023 system peak record.</div>
+      </div>
+      <div class="chart-wordmark">MODOENERGY</div>
+    </div>
+  </div>
+
+  <script>
+    // ===== DATA =====
+    const MODO_COLORS = [
+      '#4472C4', // blue
+      '#22A34D', // green
+      '#F4B183', // peach
+      '#E8734A', // coral/orange
+      '#8FAADC', // light blue
+      '#A9D18E', // light green
+      '#F6C242', // gold
+      '#C55A11', // dark orange
+    ];
+
+    // 2023 ITP vintage
+    const itp2023 = {
+      x: [2023, 2025, 2028, 2032],
+      y: [56.5, 57.7, 58.3, 59.0],
+      name: '2023 ITP',
+      type: 'scatter',
+      mode: 'lines+markers',
+      line: { width: 2, color: '#94A3B8', shape: 'spline', smoothing: 1.0, dash: 'dot' },
+      marker: { size: 7, color: '#94A3B8' },
+      hovertemplate: '%{y:.1f} GW<extra>2023 ITP</extra>',
+    };
+
+    // 2024 ITP vintage
+    const itp2024 = {
+      x: [2025, 2028, 2030, 2033],
+      y: [59.7, 62.1, 63.5, 64.8],
+      name: '2024 ITP',
+      type: 'scatter',
+      mode: 'lines+markers',
+      line: { width: 2, color: '#8FAADC', shape: 'spline', smoothing: 1.0, dash: 'dot' },
+      marker: { size: 7, color: '#8FAADC' },
+      hovertemplate: '%{y:.1f} GW<extra>2024 ITP</extra>',
+    };
+
+    // 2025 ITP vintage
+    const itp2025 = {
+      x: [2026, 2029, 2031, 2034],
+      y: [62.9, 67.7, 69.3, 70.9],
+      name: '2025 ITP',
+      type: 'scatter',
+      mode: 'lines+markers',
+      line: { width: 2.5, color: '#22A34D', shape: 'spline', smoothing: 1.0 },
+      marker: { size: 8, color: '#22A34D' },
+      hovertemplate: '%{y:.1f} GW<extra>2025 ITP</extra>',
+    };
+
+    // 2026 ITP vintage
+    const itp2026 = {
+      x: [2027, 2030, 2032, 2035],
+      y: [65.2, 70.5, 72.6, 74.8],
+      name: '2026 ITP',
+      type: 'scatter',
+      mode: 'lines+markers',
+      line: { width: 3, color: '#E8734A', shape: 'spline', smoothing: 1.0 },
+      marker: { size: 8, color: '#E8734A' },
+      hovertemplate: '%{y:.1f} GW<extra>2026 ITP</extra>',
+    };
+
+    const data = [itp2023, itp2024, itp2025, itp2026];
+
+    // ===== LAYOUT =====
+    const layout = {
+      font: {
+        family: '"DM Sans", sans-serif',
+        color: '#808080',
+        size: 12,
+      },
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      margin: { t: 10, r: 20, b: 40, l: 55, pad: 0 },
+      title: null,
+
+      xaxis: {
+        showgrid: false,
+        showline: false,
+        tickfont: { size: 12, color: '#808080', family: '"DM Sans", sans-serif' },
+        tickcolor: 'rgba(0,0,0,0)',
+        automargin: true,
+        dtick: 2,
+        range: [2022, 2036],
+      },
+
+      yaxis: {
+        showgrid: true,
+        gridcolor: '#E8E8E8',
+        gridwidth: 1,
+        showline: false,
+        tickfont: { size: 12, color: '#808080', family: '"DM Sans", sans-serif' },
+        tickcolor: 'rgba(0,0,0,0)',
+        zeroline: false,
+        automargin: true,
+        separatethousands: true,
+        range: [53, 78],
+        ticksuffix: ' ',
+      },
+
+      legend: {
+        orientation: 'h',
+        yanchor: 'bottom',
+        y: 1.02,
+        xanchor: 'left',
+        x: 0,
+        font: { size: 13, color: '#555555', family: '"DM Sans", sans-serif' },
+        bgcolor: 'rgba(255,255,255,0)',
+        borderwidth: 0,
+        itemsizing: 'constant',
+        traceorder: 'normal',
+      },
+
+      hovermode: 'closest',
+      hoverlabel: {
+        bgcolor: '#1A1A1A',
+        font: { family: '"DM Sans", sans-serif', size: 13, color: '#FFFFFF' },
+        bordercolor: '#1A1A1A',
+      },
+
+      shapes: [
+        {
+          type: 'line',
+          x0: 2022,
+          x1: 2036,
+          y0: 56.2,
+          y1: 56.2,
+          line: { color: '#CCCCCC', width: 1.5, dash: 'dash' },
+        },
+      ],
+
+      annotations: [
+        {
+          x: 2035.8,
+          y: 56.2,
+          xanchor: 'right',
+          yanchor: 'bottom',
+          text: 'Aug 2023 record: 56.2 GW',
+          showarrow: false,
+          font: { size: 11, color: '#AAAAAA', family: '"DM Sans", sans-serif' },
+        },
+      ],
+    };
+
+    // ===== RENDER =====
+    Plotly.newPlot('chart', data, layout, {
+      responsive: true,
+      displayModeBar: false,
+      staticPlot: false,
+    });
+
+    window.addEventListener('resize', () => {
+      Plotly.Plots.resize('chart');
+    });
+  </script>
+</body>
+</html>
