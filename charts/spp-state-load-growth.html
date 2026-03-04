@@ -25,7 +25,7 @@
     <div class="chart-wrapper">
         <div class="chart-header">
             <h1><b>Seven</b> of 15 SPP states expect peak loads to grow by at least <b>20%</b> over eight years</h1>
-            <div class="chart-subheader">2025 ITP peak load by state: Year 2 (2026) vs Year 10 (2034) (MW)</div>
+            <div class="chart-subheader">2025 ITP peak load by state: Year 2 (2026) vs Year 10 (2034) (GW)</div>
         </div>
         <div id="chart"></div>
         <div class="chart-footer">
@@ -38,11 +38,13 @@
     </div>
 
     <script>
-        // Sorted by percent growth ascending (lowest at bottom, highest at top)
-        const states =   ['WYOMING','MINNESOTA','MISSOURI','MONTANA','LOUISIANA','COLORADO','NEBRASKA','IOWA','KANSAS','ARKANSAS','OKLAHOMA','TEXAS','SOUTH DAKOTA','NORTH DAKOTA','NEW MEXICO'];
-        const y2 =       [200, 900, 10200, 600, 4000, 400, 6500, 5200, 6200, 4200, 13200, 5200, 1800, 2200, 3100];
-        const y10 =      [200, 1000, 11400, 700, 4800, 500, 8000, 6800, 8300, 5800, 18500, 8500, 3400, 4800, 7200];
-        const pctGrowth = [0, 11, 12, 17, 20, 25, 23, 31, 34, 38, 40, 63, 89, 118, 132];
+        // Sorted by Y10 absolute peak load ascending (highest at top of chart)
+        const states =    ['Wyoming','Colorado','Montana','Minnesota','South Dakota','Louisiana','North Dakota','Arkansas','Iowa','New Mexico','Nebraska','Kansas','Texas','Missouri','Oklahoma'];
+        const y2 =        [0.2, 0.4, 0.6, 0.9, 1.8, 4.0, 2.2, 4.2, 5.2, 3.1, 6.5, 6.2, 5.2, 10.2, 13.2];
+        const y10 =       [0.2, 0.5, 0.7, 1.0, 3.4, 4.8, 4.8, 5.8, 6.8, 7.2, 8.0, 8.3, 8.5, 11.4, 18.5];
+        const pctGrowth = [0, 25, 17, 11, 89, 20, 118, 38, 31, 132, 23, 34, 63, 12, 40];
+
+        const arrowGap = 0.3; // GW gap between arrowhead and red dot
 
         // Y2 start dots — hollow circle with blue outline
         const traceY2 = {
@@ -52,7 +54,7 @@
             type: 'scatter',
             mode: 'markers',
             marker: { size: 9, color: 'rgba(255,255,255,1)', symbol: 'circle', line: { color: '#467ee4', width: 2 } },
-            hovertemplate: '%{x:,.0f} MW<extra>Y2 (2026)</extra>'
+            hovertemplate: '%{x:.1f} GW<extra>Y2 (2026)</extra>'
         };
 
         // Y10 end dots — solid red circle
@@ -63,27 +65,41 @@
             type: 'scatter',
             mode: 'markers',
             marker: { size: 9, color: '#e85f37', symbol: 'circle' },
-            hovertemplate: '%{x:,.0f} MW<extra>Y10 (2034)</extra>'
+            hovertemplate: '%{x:.1f} GW<extra>Y10 (2034)</extra>'
         };
 
-        const data = [traceY2, traceY10];
+        // Arrowheads — small dark grey triangles just before the red dot
+        const traceArrow = {
+            y: states,
+            x: y10.map(v => v - arrowGap),
+            type: 'scatter',
+            mode: 'markers',
+            marker: { size: 7, color: '#555555', symbol: 'triangle-right' },
+            showlegend: false,
+            hoverinfo: 'skip'
+        };
+
+        const data = [traceY2, traceY10, traceArrow];
 
         // Build arrow shafts and percentage annotations
         const shapes = [];
         const annotations = [];
 
         for (let i = 0; i < states.length; i++) {
-            // Arrow shaft from Y2 to Y10
-            shapes.push({
-                type: 'line',
-                y0: states[i],
-                y1: states[i],
-                x0: y2[i],
-                x1: y10[i],
-                yref: 'y',
-                xref: 'x',
-                line: { color: '#555555', width: 2 }
-            });
+            // Arrow shaft from Y2 to just before the arrowhead
+            const shaftEnd = y10[i] - arrowGap - 0.08;
+            if (shaftEnd > y2[i]) {
+                shapes.push({
+                    type: 'line',
+                    y0: states[i],
+                    y1: states[i],
+                    x0: y2[i],
+                    x1: shaftEnd,
+                    yref: 'y',
+                    xref: 'x',
+                    line: { color: '#555555', width: 2 }
+                });
+            }
 
             // Percentage annotation at the midpoint of the arrow
             const midX = (y2[i] + y10[i]) / 2;
@@ -102,22 +118,11 @@
             });
         }
 
-        // 20% threshold reference annotation
-        annotations.push({
-            x: 20500,
-            y: 'NEW MEXICO',
-            text: '≥20% threshold',
-            showarrow: false,
-            font: { size: 10, color: '#e85f37', family: '"DM Sans", sans-serif' },
-            yshift: -16,
-            xanchor: 'right'
-        });
-
         const layout = {
             font: { family: '"DM Sans", sans-serif', color: '#4a4a4a', size: 12 },
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
-            margin: { t: 10, r: 20, b: 40, l: 120, pad: 0 },
+            margin: { t: 10, r: 20, b: 40, l: 110, pad: 0 },
             title: null,
             xaxis: {
                 showgrid: true,
@@ -129,8 +134,8 @@
                 zeroline: false,
                 automargin: true,
                 separatethousands: true,
-                range: [0, 21000],
-                title: { text: 'Peak load (MW)', font: { size: 12, color: '#888', family: '"DM Sans", sans-serif' }, standoff: 10 }
+                range: [0, 21],
+                title: { text: 'Peak load (GW)', font: { size: 12, color: '#888', family: '"DM Sans", sans-serif' }, standoff: 10 }
             },
             yaxis: {
                 showgrid: false,
