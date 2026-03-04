@@ -38,63 +38,87 @@
     </div>
 
     <script>
-        // Full state names, capitalised — sorted by percent growth descending
-        const states = [
-            'WYOMING', 'MINNESOTA', 'COLORADO', 'MISSOURI',
-            'LOUISIANA', 'NEBRASKA', 'IOWA', 'KANSAS',
-            'ARKANSAS', 'OKLAHOMA', 'SOUTH DAKOTA', 'TEXAS',
-            'NORTH DAKOTA', 'NEW MEXICO', 'MONTANA'
-        ].reverse();
+        // Sorted by percent growth ascending (lowest at bottom, highest at top)
+        const states =   ['WYOMING','MINNESOTA','MISSOURI','MONTANA','LOUISIANA','COLORADO','NEBRASKA','IOWA','KANSAS','ARKANSAS','OKLAHOMA','TEXAS','SOUTH DAKOTA','NORTH DAKOTA','NEW MEXICO'];
+        const y2 =       [200, 900, 10200, 600, 4000, 400, 6500, 5200, 6200, 4200, 13200, 5200, 1800, 2200, 3100];
+        const y10 =      [200, 1000, 11400, 700, 4800, 500, 8000, 6800, 8300, 5800, 18500, 8500, 3400, 4800, 7200];
+        const pctGrowth = [0, 11, 12, 17, 20, 25, 23, 31, 34, 38, 40, 63, 89, 118, 132];
 
-        const y2 = [200, 900, 400, 10200, 4000, 6500, 5200, 6200, 4200, 13200, 1800, 5200, 2200, 3100, 600].reverse();
-        const y10 = [200, 1000, 500, 11400, 4800, 8000, 6800, 8300, 5800, 18500, 3400, 8500, 4800, 7200, 700].reverse();
-        const pctGrowth = [0, 11, 25, 12, 20, 23, 31, 34, 38, 40, 89, 63, 118, 132, 17].reverse();
-
+        // Y2 start dots
         const traceY2 = {
             y: states,
             x: y2,
-            name: '2025 ITP Y2 (2026)',
-            type: 'bar',
-            orientation: 'h',
-            marker: { color: '#467ee4', line: { width: 0 } },
-            hovertemplate: '%{x:,.0f} MW<extra>2025 ITP Y2</extra>'
+            name: 'Y2 (2026)',
+            type: 'scatter',
+            mode: 'markers',
+            marker: { size: 8, color: '#467ee4', symbol: 'circle' },
+            hovertemplate: '%{x:,.0f} MW<extra>Y2 (2026)</extra>'
         };
 
+        // Y10 end dots (arrowheads)
         const traceY10 = {
             y: states,
             x: y10,
-            name: '2025 ITP Y10 (2034)',
-            type: 'bar',
-            orientation: 'h',
-            marker: { color: '#27ac60', line: { width: 0 } },
-            hovertemplate: '%{x:,.0f} MW<extra>2025 ITP Y10</extra>'
-        };
-
-        const tracePct = {
-            y: states,
-            x: pctGrowth,
-            name: 'Percent growth',
+            name: 'Y10 (2034)',
             type: 'scatter',
-            mode: 'markers+text',
-            xaxis: 'x2',
-            marker: { size: 8, color: '#e85f37' },
-            text: pctGrowth.map(p => p + '%'),
-            textposition: 'middle right',
-            textfont: { size: 10, color: '#e85f37', family: '"DM Sans", sans-serif' },
-            hovertemplate: '%{x}%<extra>Growth</extra>'
+            mode: 'markers',
+            marker: { size: 10, color: '#e85f37', symbol: 'triangle-right' },
+            hovertemplate: '%{x:,.0f} MW<extra>Y10 (2034)</extra>'
         };
 
-        const data = [traceY2, traceY10, tracePct];
+        const data = [traceY2, traceY10];
+
+        // Build arrow shafts and percentage annotations
+        const shapes = [];
+        const annotations = [];
+
+        for (let i = 0; i < states.length; i++) {
+            // Arrow shaft from Y2 to Y10
+            shapes.push({
+                type: 'line',
+                y0: states[i],
+                y1: states[i],
+                x0: y2[i],
+                x1: y10[i],
+                yref: 'y',
+                xref: 'x',
+                line: { color: pctGrowth[i] >= 20 ? '#e85f37' : '#aaaaaa', width: 2 }
+            });
+
+            // Percentage annotation at the midpoint of the arrow
+            const midX = (y2[i] + y10[i]) / 2;
+            annotations.push({
+                x: midX,
+                y: states[i],
+                text: '<b>' + (pctGrowth[i] > 0 ? '+' + pctGrowth[i] + '%' : '0%') + '</b>',
+                showarrow: false,
+                font: {
+                    size: 10,
+                    color: pctGrowth[i] >= 20 ? '#e85f37' : '#888888',
+                    family: '"DM Sans", sans-serif'
+                },
+                yshift: 12,
+                xanchor: 'center'
+            });
+        }
+
+        // 20% threshold reference annotation
+        annotations.push({
+            x: 20500,
+            y: 'NEW MEXICO',
+            text: '≥20% threshold',
+            showarrow: false,
+            font: { size: 10, color: '#e85f37', family: '"DM Sans", sans-serif' },
+            yshift: -16,
+            xanchor: 'right'
+        });
 
         const layout = {
             font: { family: '"DM Sans", sans-serif', color: '#4a4a4a', size: 12 },
             paper_bgcolor: 'rgba(0,0,0,0)',
             plot_bgcolor: 'rgba(0,0,0,0)',
-            margin: { t: 10, r: 60, b: 40, l: 120, pad: 0 },
+            margin: { t: 10, r: 20, b: 40, l: 120, pad: 0 },
             title: null,
-            barmode: 'group',
-            bargap: 0.2,
-            bargroupgap: 0.05,
             xaxis: {
                 showgrid: true,
                 gridcolor: '#E8E8E8',
@@ -105,30 +129,21 @@
                 zeroline: false,
                 automargin: true,
                 separatethousands: true,
-                range: [0, 22000]
-            },
-            xaxis2: {
-                overlaying: 'x',
-                side: 'top',
-                showgrid: false,
-                showline: false,
-                zeroline: false,
-                tickfont: { size: 11, color: '#e85f37', family: '"DM Sans", sans-serif' },
-                tickcolor: 'rgba(0,0,0,0)',
-                ticksuffix: '%',
-                range: [0, 160]
+                range: [0, 21000],
+                title: { text: 'Peak load (MW)', font: { size: 12, color: '#888', family: '"DM Sans", sans-serif' }, standoff: 10 }
             },
             yaxis: {
                 showgrid: false,
                 showline: false,
                 tickfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' },
                 tickcolor: 'rgba(0,0,0,0)',
-                automargin: true
+                automargin: true,
+                type: 'category'
             },
             legend: {
                 orientation: 'h',
                 yanchor: 'bottom',
-                y: 1.06,
+                y: 1.02,
                 xanchor: 'left',
                 x: 0,
                 font: { size: 12, color: '#4a4a4a', family: '"DM Sans", sans-serif' },
@@ -143,22 +158,13 @@
                 font: { family: '"DM Sans", sans-serif', size: 13, color: '#FFFFFF' },
                 bordercolor: '#333333'
             },
-            shapes: [{
-                type: 'line',
-                y0: -0.5,
-                y1: 14.5,
-                x0: 20,
-                x1: 20,
-                xref: 'x2',
-                line: { color: '#e85f37', width: 1, dash: 'dash' }
-            }]
+            shapes: shapes,
+            annotations: annotations
         };
 
         Plotly.newPlot('chart', data, layout, { responsive: true, displayModeBar: false, staticPlot: false });
 
-        window.addEventListener('resize', () => {
-            Plotly.Plots.resize('chart');
-        });
+        window.addEventListener('resize', () => { Plotly.Plots.resize('chart'); });
     </script>
 </body>
 </html>
