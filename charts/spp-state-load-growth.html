@@ -44,25 +44,25 @@
         const y10 =      [200, 1000, 11400, 700, 4800, 500, 8000, 6800, 8300, 5800, 18500, 8500, 3400, 4800, 7200];
         const pctGrowth = [0, 11, 12, 17, 20, 25, 23, 31, 34, 38, 40, 63, 89, 118, 132];
 
-        // Y2 start dots
+        // Y2 start dots — hollow circle with blue outline
         const traceY2 = {
             y: states,
             x: y2,
             name: 'Y2 (2026)',
             type: 'scatter',
             mode: 'markers',
-            marker: { size: 8, color: '#467ee4', symbol: 'circle' },
+            marker: { size: 9, color: 'rgba(255,255,255,1)', symbol: 'circle', line: { color: '#467ee4', width: 2 } },
             hovertemplate: '%{x:,.0f} MW<extra>Y2 (2026)</extra>'
         };
 
-        // Y10 end dots (arrowheads)
+        // Y10 end dots — solid red circle
         const traceY10 = {
             y: states,
             x: y10,
             name: 'Y10 (2034)',
             type: 'scatter',
             mode: 'markers',
-            marker: { size: 10, color: '#e85f37', symbol: 'triangle-right' },
+            marker: { size: 9, color: '#e85f37', symbol: 'circle' },
             hovertemplate: '%{x:,.0f} MW<extra>Y10 (2034)</extra>'
         };
 
@@ -82,7 +82,7 @@
                 x1: y10[i],
                 yref: 'y',
                 xref: 'x',
-                line: { color: pctGrowth[i] >= 20 ? '#e85f37' : '#aaaaaa', width: 2 }
+                line: { color: '#555555', width: 2 }
             });
 
             // Percentage annotation at the midpoint of the arrow
@@ -94,7 +94,7 @@
                 showarrow: false,
                 font: {
                     size: 10,
-                    color: pctGrowth[i] >= 20 ? '#e85f37' : '#888888',
+                    color: '#555555',
                     family: '"DM Sans", sans-serif'
                 },
                 yshift: 12,
