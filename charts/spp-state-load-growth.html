@@ -24,25 +24,25 @@
 <body>
     <div class="chart-wrapper">
         <div class="chart-header">
-            <h1>7 of 15 SPP states expect peak loads to grow by at least <b>20%</b> over eight years</h1>
+            <h1>7 of 11 SPP states with significant load expect peak growth of at least <b>20%</b> over eight years</h1>
             <div class="chart-subheader">2025 ITP peak load by state: Year 2 (2026) vs Year 10 (2034) (GW)</div>
         </div>
         <div id="chart"></div>
         <div class="chart-footer">
             <div class="chart-footer-left">
                 <div class="chart-source">Source: SPP 2025 ITP Assessment Report, Figure 3.6, p93; Modo Energy</div>
-                <div class="chart-note">Note: State values approximate; some utility zones cross state boundaries. CO, MN, MT, WY have small SPP footprints.</div>
+                <div class="chart-note">Note: State values approximate; some utility zones cross state boundaries. CO, MN, MT, WY excluded due to small SPP load volumes.</div>
             </div>
             <div class="chart-wordmark">MODOENERGY</div>
         </div>
     </div>
 
     <script>
-        // Sorted by Y10 absolute peak load ascending (highest at top of chart)
-        const states =    ['Wyoming','Colorado','Montana','Minnesota','South Dakota','Louisiana','North Dakota','Arkansas','Iowa','New Mexico','Nebraska','Kansas','Texas','Missouri','Oklahoma'];
-        const y2 =        [0.2, 0.4, 0.6, 0.9, 1.8, 4.0, 2.2, 4.2, 5.2, 3.1, 6.5, 6.2, 5.2, 10.2, 13.2];
-        const y10 =       [0.2, 0.5, 0.7, 1.0, 3.4, 4.8, 4.8, 5.8, 6.8, 7.2, 8.0, 8.3, 8.5, 11.4, 18.5];
-        const pctGrowth = [0, 25, 17, 11, 89, 20, 118, 38, 31, 132, 23, 34, 63, 12, 40];
+        // Sorted by Y10 absolute peak load ascending (highest at top). CO, MN, MT, WY excluded.
+        const states =    ['South Dakota','Louisiana','North Dakota','Arkansas','Iowa','New Mexico','Nebraska','Kansas','Texas','Missouri','Oklahoma'];
+        const y2 =        [1.8, 4.0, 2.2, 4.2, 5.2, 3.1, 6.5, 6.2, 5.2, 10.2, 13.2];
+        const y10 =       [3.4, 4.8, 4.8, 5.8, 6.8, 7.2, 8.0, 8.3, 8.5, 11.4, 18.5];
+        const pctGrowth = [89, 20, 118, 38, 31, 132, 23, 34, 63, 12, 40];
 
         // Y2 start dots — hollow circle with blue outline
         const traceY2 = {
