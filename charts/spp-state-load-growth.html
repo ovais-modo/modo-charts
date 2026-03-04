@@ -1,82 +1,164 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPP Load Growth by State</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.0/plotly.min.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'DM Sans', sans-serif; background: #FFFFFF; color: #333333; }
-    .chart-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; padding: 24px 24px 16px 24px; }
-    .chart-header { margin-bottom: 2px; }
-    .chart-header h1 { font-size: 21px; font-weight: 400; line-height: 1.3; color: #333333; margin: 0; }
-    .chart-header h1 b { font-weight: 700; }
-    .chart-subheader { font-size: 14px; font-weight: 400; color: #4a4a4a; margin-top: 6px; line-height: 1.3; }
-    #chart { flex: 1; min-height: 0; width: 100%; }
-    .chart-footer { display: flex; justify-content: space-between; align-items: flex-end; padding-top: 10px; gap: 16px; }
-    .chart-footer-left { display: flex; flex-direction: column; gap: 2px; flex: 1; }
-    .chart-source { font-size: 11px; font-weight: 400; color: #AAAAAA; line-height: 1.4; }
-    .chart-note { font-size: 11px; font-weight: 400; color: #AAAAAA; line-height: 1.4; }
-    .chart-wordmark { font-size: 22px; font-weight: 700; color: #333333; letter-spacing: 0.25em; white-space: nowrap; flex-shrink: 0; text-transform: uppercase; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPP Load Growth by State</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.0/plotly.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'DM Sans', sans-serif; background: #FFFFFF; color: #333333; }
+        .chart-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; padding: 24px 24px 16px 24px; }
+        .chart-header { margin-bottom: 2px; }
+        .chart-header h1 { font-size: 21px; font-weight: 400; line-height: 1.3; color: #333333; margin: 0; }
+        .chart-header h1 b { font-weight: 700; }
+        .chart-subheader { font-size: 14px; font-weight: 400; color: #4a4a4a; margin-top: 6px; line-height: 1.3; }
+        #chart { flex: 1; min-height: 0; width: 100%; }
+        .chart-footer { display: flex; justify-content: space-between; align-items: flex-end; padding-top: 10px; gap: 16px; }
+        .chart-footer-left { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+        .chart-source { font-size: 11px; font-weight: 400; color: #AAAAAA; line-height: 1.4; }
+        .chart-note { font-size: 11px; font-weight: 400; color: #AAAAAA; line-height: 1.4; }
+        .chart-wordmark { font-size: 22px; font-weight: 700; color: #333333; letter-spacing: 0.25em; white-space: nowrap; flex-shrink: 0; text-transform: uppercase; }
+    </style>
 </head>
 <body>
-  <div class="chart-wrapper">
-    <div class="chart-header">
-      <h1><b>Seven</b> of 15 SPP states expect peak loads to grow by at least <b>20%</b> over eight years</h1>
-      <div class="chart-subheader">2025 ITP peak load by state: Year 2 (2026) vs Year 10 (2034) (MW)</div>
+    <div class="chart-wrapper">
+        <div class="chart-header">
+            <h1><b>Seven</b> of 15 SPP states expect peak loads to grow by at least <b>20%</b> over eight years</h1>
+            <div class="chart-subheader">2025 ITP peak load by state: Year 2 (2026) vs Year 10 (2034) (MW)</div>
+        </div>
+        <div id="chart"></div>
+        <div class="chart-footer">
+            <div class="chart-footer-left">
+                <div class="chart-source">Source: SPP 2025 ITP Assessment Report, Figure 3.6, p93; Modo Energy</div>
+                <div class="chart-note">Note: State values approximate; some utility zones cross state boundaries. CO, MN, MT, WY have small SPP footprints.</div>
+            </div>
+            <div class="chart-wordmark">MODOENERGY</div>
+        </div>
     </div>
-    <div id="chart"></div>
-    <div class="chart-footer">
-      <div class="chart-footer-left">
-        <div class="chart-source">Source: SPP 2025 ITP Assessment Report, Figure 3.6, p93; Modo Energy</div>
-        <div class="chart-note">Note: State values approximate; some utility zones cross state boundaries. CO, MN, MT, WY have small SPP footprints.</div>
-      </div>
-      <div class="chart-wordmark">MODOENERGY</div>
-    </div>
-  </div>
 
-  <script>
-    const states =  ['TX','NM','ND','SD','OK','AR','KS','IA','NE','LA','MO','CO','MN','MT','WY'];
-    const y2 =      [5200, 3100, 2200, 1800, 13200, 4200, 6200, 5200, 6500, 4000, 10200, 400, 900, 600, 200];
-    const y10 =     [8500, 7200, 4800, 3400, 18500, 5800, 8300, 6800, 8000, 4800, 11400, 500, 1000, 700, 200];
-    const pctGrowth = [63, 132, 118, 89, 40, 38, 34, 31, 23, 20, 12, 25, 11, 17, 0];
+    <script>
+        // Full state names, capitalised — sorted by percent growth descending
+        const states = [
+            'WYOMING', 'MINNESOTA', 'COLORADO', 'MISSOURI',
+            'LOUISIANA', 'NEBRASKA', 'IOWA', 'KANSAS',
+            'ARKANSAS', 'OKLAHOMA', 'SOUTH DAKOTA', 'TEXAS',
+            'NORTH DAKOTA', 'NEW MEXICO', 'MONTANA'
+        ].reverse();
 
-    const traceY2 = { x: states, y: y2, name: '2025 ITP Y2 (2026)', type: 'bar',
-      marker: { color: '#467ee4', line: { width: 0 } },
-      hovertemplate: '%{y:,.0f} MW<extra>2025 ITP Y2</extra>' };
+        const y2 = [200, 900, 400, 10200, 4000, 6500, 5200, 6200, 4200, 13200, 1800, 5200, 2200, 3100, 600].reverse();
+        const y10 = [200, 1000, 500, 11400, 4800, 8000, 6800, 8300, 5800, 18500, 3400, 8500, 4800, 7200, 700].reverse();
+        const pctGrowth = [0, 11, 25, 12, 20, 23, 31, 34, 38, 40, 89, 63, 118, 132, 17].reverse();
 
-    const traceY10 = { x: states, y: y10, name: '2025 ITP Y10 (2034)', type: 'bar',
-      marker: { color: '#27ac60', line: { width: 0 } },
-      hovertemplate: '%{y:,.0f} MW<extra>2025 ITP Y10</extra>' };
+        const traceY2 = {
+            y: states,
+            x: y2,
+            name: '2025 ITP Y2 (2026)',
+            type: 'bar',
+            orientation: 'h',
+            marker: { color: '#467ee4', line: { width: 0 } },
+            hovertemplate: '%{x:,.0f} MW<extra>2025 ITP Y2</extra>'
+        };
 
-    const tracePct = { x: states, y: pctGrowth, name: 'Percent growth', type: 'scatter', mode: 'lines+markers+text', yaxis: 'y2',
-      line: { width: 2.5, color: '#e85f37', shape: 'spline', smoothing: 0.5 },
-      marker: { size: 7, color: '#e85f37' },
-      text: pctGrowth.map(p => p + '%'), textposition: 'top center',
-      textfont: { size: 10, color: '#e85f37', family: '"DM Sans", sans-serif' },
-      hovertemplate: '%{y}%<extra>Growth</extra>' };
+        const traceY10 = {
+            y: states,
+            x: y10,
+            name: '2025 ITP Y10 (2034)',
+            type: 'bar',
+            orientation: 'h',
+            marker: { color: '#27ac60', line: { width: 0 } },
+            hovertemplate: '%{x:,.0f} MW<extra>2025 ITP Y10</extra>'
+        };
 
-    const data = [traceY2, traceY10, tracePct];
+        const tracePct = {
+            y: states,
+            x: pctGrowth,
+            name: 'Percent growth',
+            type: 'scatter',
+            mode: 'markers+text',
+            xaxis: 'x2',
+            marker: { size: 8, color: '#e85f37' },
+            text: pctGrowth.map(p => p + '%'),
+            textposition: 'middle right',
+            textfont: { size: 10, color: '#e85f37', family: '"DM Sans", sans-serif' },
+            hovertemplate: '%{x}%<extra>Growth</extra>'
+        };
 
-    const layout = {
-      font: { family: '"DM Sans", sans-serif', color: '#4a4a4a', size: 12 },
-      paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
-      margin: { t: 10, r: 55, b: 40, l: 0, pad: 0 },
-      title: null, barmode: 'group', bargap: 0.25, bargroupgap: 0.05,
-      xaxis: { showgrid: false, showline: false, tickfont: { size: 12, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, tickcolor: 'rgba(0,0,0,0)', automargin: true },
-      yaxis: { showgrid: true, gridcolor: '#E8E8E8', gridwidth: 1, showline: false, tickfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, tickcolor: 'rgba(0,0,0,0)', zeroline: false, automargin: true, separatethousands: true, range: [0, 22000] },
-      yaxis2: { overlaying: 'y', side: 'right', showgrid: false, showline: false, zeroline: false, tickfont: { size: 11, color: '#e85f37', family: '"DM Sans", sans-serif' }, tickcolor: 'rgba(0,0,0,0)', ticksuffix: '%', range: [0, 150] },
-      legend: { orientation: 'h', yanchor: 'bottom', y: 1.02, xanchor: 'left', x: 0, font: { size: 12, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, bgcolor: 'rgba(255,255,255,0)', borderwidth: 0, itemsizing: 'constant', traceorder: 'normal' },
-      hovermode: 'x unified',
-      hoverlabel: { bgcolor: '#333333', font: { family: '"DM Sans", sans-serif', size: 13, color: '#FFFFFF' }, bordercolor: '#333333' },
-      shapes: [{ type: 'line', x0: -0.5, x1: 14.5, y0: 20, y1: 20, yref: 'y2', line: { color: '#e85f37', width: 1, dash: 'dash' } }],
-    };
+        const data = [traceY2, traceY10, tracePct];
 
-    Plotly.newPlot('chart', data, layout, { responsive: true, displayModeBar: false, staticPlot: false });
-    window.addEventListener('resize', () => { Plotly.Plots.resize('chart'); });
-  </script>
+        const layout = {
+            font: { family: '"DM Sans", sans-serif', color: '#4a4a4a', size: 12 },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            margin: { t: 10, r: 60, b: 40, l: 120, pad: 0 },
+            title: null,
+            barmode: 'group',
+            bargap: 0.2,
+            bargroupgap: 0.05,
+            xaxis: {
+                showgrid: true,
+                gridcolor: '#E8E8E8',
+                gridwidth: 1,
+                showline: false,
+                tickfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' },
+                tickcolor: 'rgba(0,0,0,0)',
+                zeroline: false,
+                automargin: true,
+                separatethousands: true,
+                range: [0, 22000]
+            },
+            xaxis2: {
+                overlaying: 'x',
+                side: 'top',
+                showgrid: false,
+                showline: false,
+                zeroline: false,
+                tickfont: { size: 11, color: '#e85f37', family: '"DM Sans", sans-serif' },
+                tickcolor: 'rgba(0,0,0,0)',
+                ticksuffix: '%',
+                range: [0, 160]
+            },
+            yaxis: {
+                showgrid: false,
+                showline: false,
+                tickfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' },
+                tickcolor: 'rgba(0,0,0,0)',
+                automargin: true
+            },
+            legend: {
+                orientation: 'h',
+                yanchor: 'bottom',
+                y: 1.06,
+                xanchor: 'left',
+                x: 0,
+                font: { size: 12, color: '#4a4a4a', family: '"DM Sans", sans-serif' },
+                bgcolor: 'rgba(255,255,255,0)',
+                borderwidth: 0,
+                itemsizing: 'constant',
+                traceorder: 'normal'
+            },
+            hovermode: 'closest',
+            hoverlabel: {
+                bgcolor: '#333333',
+                font: { family: '"DM Sans", sans-serif', size: 13, color: '#FFFFFF' },
+                bordercolor: '#333333'
+            },
+            shapes: [{
+                type: 'line',
+                y0: -0.5,
+                y1: 14.5,
+                x0: 20,
+                x1: 20,
+                xref: 'x2',
+                line: { color: '#e85f37', width: 1, dash: 'dash' }
+            }]
+        };
+
+        Plotly.newPlot('chart', data, layout, { responsive: true, displayModeBar: false, staticPlot: false });
+
+        window.addEventListener('resize', () => {
+            Plotly.Plots.resize('chart');
+        });
+    </script>
 </body>
 </html>
