@@ -1,77 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SPP Load Growth by Powerflow Area</title>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;0,9..40,800;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.0/plotly.min.js"></script>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'DM Sans', sans-serif; background: #FFFFFF; color: #333333; }
-    .chart-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; padding: 24px 24px 16px 24px; }
-    .chart-header { margin-bottom: 2px; }
-    .chart-header h1 { font-size: 21px; font-weight: 400; line-height: 1.3; color: #333333; margin: 0; }
-    .chart-header h1 b { font-weight: 700; }
-    .chart-subheader { font-size: 14px; font-weight: 400; color: #4a4a4a; margin-top: 6px; line-height: 1.3; }
-    #chart { flex: 1; min-height: 0; width: 100%; }
-    .chart-footer { display: flex; justify-content: space-between; align-items: flex-end; padding-top: 10px; gap: 16px; }
-    .chart-footer-left { display: flex; flex-direction: column; gap: 2px; flex: 1; }
-    .chart-source { font-size: 11px; font-weight: 400; color: #AAAAAA; line-height: 1.4; }
-    .chart-note { font-size: 11px; font-weight: 400; color: #AAAAAA; line-height: 1.4; }
-    .chart-wordmark { font-size: 22px; font-weight: 700; color: #333333; letter-spacing: 0.25em; white-space: nowrap; flex-shrink: 0; text-transform: uppercase; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SPP Load Growth by Powerflow Area</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.35.0/plotly.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { width: 100%; height: 100%; overflow: hidden; font-family: 'DM Sans', sans-serif; background: #FFFFFF; color: #333333; }
+        .chart-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; padding: 24px 24px 16px 24px; }
+        .chart-header { margin-bottom: 2px; }
+        .chart-header h1 { font-size: 21px; font-weight: 400; line-height: 1.3; color: #333333; margin: 0; }
+        .chart-header h1 b { font-weight: 700; }
+        .chart-subheader { font-size: 14px; font-weight: 400; color: #4a4a4a; margin-top: 6px; line-height: 1.3; }
+        #chart { flex: 1; min-height: 0; width: 100%; }
+        .chart-footer { display: flex; justify-content: space-between; align-items: flex-end; padding-top: 10px; gap: 16px; }
+        .chart-footer-left { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+        .chart-source { font-size: 11px; font-weight: 400; color: #AAAAAA; line-height: 1.4; }
+        .chart-note { font-size: 11px; font-weight: 400; color: #AAAAAA; line-height: 1.4; }
+        .chart-wordmark { font-size: 22px; font-weight: 700; color: #333333; letter-spacing: 0.25em; white-space: nowrap; flex-shrink: 0; text-transform: uppercase; }
+    </style>
 </head>
 <body>
-  <div class="chart-wrapper">
-    <div class="chart-header">
-      <h1><b>SPS</b> and <b>OPPD</b> more than double as 8 of 17 areas exceed <b>20%</b> load growth</h1>
-      <div class="chart-subheader">Peak demand by powerflow area, 2023 ITP Y10 vs 2026 ITP Y10 (MW)</div>
+    <div class="chart-wrapper">
+        <div class="chart-header">
+            <h1><b>SPS</b> and <b>OPPD</b> more than double as 8 of 17 areas exceed <b>20%</b> load growth</h1>
+            <div class="chart-subheader">Peak demand by powerflow area, 2023 ITP Y10 vs 2026 ITP Y10 (MW)</div>
+        </div>
+        <div id="chart"></div>
+        <div class="chart-footer">
+            <div class="chart-footer-left">
+                <div class="chart-source">Source: SPP 2025 ITP Assessment Report, Figure 3.5, p93; Modo Energy</div>
+                <div class="chart-note">Note: SPS absolute values confirmed from report text. Other area MW values are approximate. Growth percentages are directly from Figure 3.5.</div>
+            </div>
+            <div class="chart-wordmark">MODOENERGY</div>
+        </div>
     </div>
-    <div id="chart"></div>
-    <div class="chart-footer">
-      <div class="chart-footer-left">
-        <div class="chart-source">Source: SPP 2025 ITP Assessment Report, Figure 3.5, p93; Modo Energy</div>
-        <div class="chart-note">Note: SPS absolute values confirmed from report text. Other area MW values are approximate. Growth percentages are directly from Figure 3.5.</div>
-      </div>
-      <div class="chart-wordmark">MODOENERGY</div>
-    </div>
-  </div>
 
-  <script>
-    const areas =     ['Evergy-EKC','WFEC','Evergy-KCP&L','LES','MIDW','SWPA','Evergy-GMO','WR/Evergy','GRDA','NPPD','AEP-PSO','OGE','OMPA','AEP-SWEPCO','OPPD','SPS'];
-    const itp2023 =   [2000, 2900, 3900, 1900, 2800, 1800, 3500, 5500, 1400, 3000, 4400, 5600, 1100, 3700, 1300, 5000];
-    const itp2026 =   [2000, 3000, 4000, 2000, 3000, 2000, 4000, 6200, 1700, 3800, 6000, 8000, 1700, 6500, 3000, 11500];
-    const growthPct = [0, 3, 3, 5, 7, 11, 13, 13, 21, 26, 36, 42, 55, 76, 129, 130];
+    <script>
+        const areas = ['Evergy-EKC','WFEC','Evergy-KCP&L','LES','MIDW','SWPA','Evergy-GMO','WR/Evergy','GRDA','NPPD','AEP-PSO','OGE','OMPA','AEP-SWEPCO','OPPD','SPS'];
+        const itp2023 = [2000, 2900, 3900, 1900, 2800, 1800, 3500, 5500, 1400, 3000, 4400, 5600, 1100, 3700, 1300, 5000];
+        const itp2026 = [2000, 3000, 4000, 2000, 3000, 2000, 4000, 6200, 1700, 3800, 6000, 8000, 1700, 6500, 3000, 11500];
+        const growthPct = [0, 3, 3, 5, 7, 11, 13, 13, 21, 26, 36, 42, 55, 76, 129, 130];
 
-    const colorScale = (pct) => pct >= 50 ? '#e85f37' : pct >= 20 ? '#e59c58' : '#467ee4';
+        const trace2023 = { y: areas, x: itp2023, name: '2023 ITP Y10', type: 'bar', orientation: 'h', marker: { color: '#467ee4', line: { width: 0 } }, hovertemplate: '%{x:,.0f} MW<extra>2023 ITP Y10</extra>' };
 
-    const trace2023 = { y: areas, x: itp2023, name: '2023 ITP Y10', type: 'bar', orientation: 'h',
-      marker: { color: '#81b1fe', line: { width: 0 } },
-      hovertemplate: '%{x:,.0f} MW<extra>2023 ITP Y10</extra>' };
+        const trace2026 = { y: areas, x: itp2026, name: '2026 ITP Y10', type: 'bar', orientation: 'h', marker: { color: '#e85f37', line: { width: 0 } }, text: growthPct.map(p => p > 0 ? `+${p}%` : '0%'), textposition: 'outside', textfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, cliponaxis: false, hovertemplate: '%{x:,.0f} MW<extra>2026 ITP Y10</extra>' };
 
-    const trace2026 = { y: areas, x: itp2026, name: '2026 ITP Y10', type: 'bar', orientation: 'h',
-      marker: { color: growthPct.map(colorScale), line: { width: 0 } },
-      text: growthPct.map(p => p > 0 ? `+${p}%` : '0%'), textposition: 'outside',
-      textfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' },
-      cliponaxis: false, hovertemplate: '%{x:,.0f} MW<extra>2026 ITP Y10</extra>' };
+        const data = [trace2023, trace2026];
 
-    const data = [trace2023, trace2026];
+        const layout = { font: { family: '"DM Sans", sans-serif', color: '#4a4a4a', size: 12 }, paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', margin: { t: 10, r: 60, b: 30, l: 0, pad: 0 }, title: null, barmode: 'group', bargap: 0.2, bargroupgap: 0.05, xaxis: { showgrid: true, gridcolor: '#E8E8E8', gridwidth: 1, showline: false, tickfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, tickcolor: 'rgba(0,0,0,0)', automargin: true, separatethousands: true, range: [0, 14500] }, yaxis: { showgrid: false, showline: false, tickfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, tickcolor: 'rgba(0,0,0,0)', automargin: true }, legend: { orientation: 'h', yanchor: 'bottom', y: 1.02, xanchor: 'left', x: 0, font: { size: 13, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, bgcolor: 'rgba(255,255,255,0)', borderwidth: 0, itemsizing: 'constant', traceorder: 'normal' }, hovermode: 'closest', hoverlabel: { bgcolor: '#333333', font: { family: '"DM Sans", sans-serif', size: 13, color: '#FFFFFF' }, bordercolor: '#333333' } };
 
-    const layout = {
-      font: { family: '"DM Sans", sans-serif', color: '#4a4a4a', size: 12 },
-      paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
-      margin: { t: 10, r: 60, b: 30, l: 0, pad: 0 },
-      title: null, barmode: 'group', bargap: 0.2, bargroupgap: 0.05,
-      xaxis: { showgrid: true, gridcolor: '#E8E8E8', gridwidth: 1, showline: false, tickfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, tickcolor: 'rgba(0,0,0,0)', automargin: true, separatethousands: true, range: [0, 14500] },
-      yaxis: { showgrid: false, showline: false, tickfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, tickcolor: 'rgba(0,0,0,0)', automargin: true },
-      legend: { orientation: 'h', yanchor: 'bottom', y: 1.02, xanchor: 'left', x: 0, font: { size: 13, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, bgcolor: 'rgba(255,255,255,0)', borderwidth: 0, itemsizing: 'constant', traceorder: 'normal' },
-      hovermode: 'closest',
-      hoverlabel: { bgcolor: '#333333', font: { family: '"DM Sans", sans-serif', size: 13, color: '#FFFFFF' }, bordercolor: '#333333' },
-    };
+        Plotly.newPlot('chart', data, layout, { responsive: true, displayModeBar: false, staticPlot: false });
 
-    Plotly.newPlot('chart', data, layout, { responsive: true, displayModeBar: false, staticPlot: false });
-    window.addEventListener('resize', () => { Plotly.Plots.resize('chart'); });
-  </script>
+        window.addEventListener('resize', () => { Plotly.Plots.resize('chart'); });
+    </script>
 </body>
 </html>
