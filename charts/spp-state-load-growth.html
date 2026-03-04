@@ -24,7 +24,7 @@
 <body>
     <div class="chart-wrapper">
         <div class="chart-header">
-            <h1><b>Seven</b> of 15 SPP states expect peak loads to grow by at least <b>20%</b> over eight years</h1>
+            <h1>7 of 15 SPP states expect peak loads to grow by at least <b>20%</b> over eight years</h1>
             <div class="chart-subheader">2025 ITP peak load by state: Year 2 (2026) vs Year 10 (2034) (GW)</div>
         </div>
         <div id="chart"></div>
@@ -43,8 +43,6 @@
         const y2 =        [0.2, 0.4, 0.6, 0.9, 1.8, 4.0, 2.2, 4.2, 5.2, 3.1, 6.5, 6.2, 5.2, 10.2, 13.2];
         const y10 =       [0.2, 0.5, 0.7, 1.0, 3.4, 4.8, 4.8, 5.8, 6.8, 7.2, 8.0, 8.3, 8.5, 11.4, 18.5];
         const pctGrowth = [0, 25, 17, 11, 89, 20, 118, 38, 31, 132, 23, 34, 63, 12, 40];
-
-        const arrowGap = 0.3; // GW gap between arrowhead and red dot
 
         // Y2 start dots — hollow circle with blue outline
         const traceY2 = {
@@ -68,38 +66,24 @@
             hovertemplate: '%{x:.1f} GW<extra>Y10 (2034)</extra>'
         };
 
-        // Arrowheads — small dark grey triangles just before the red dot
-        const traceArrow = {
-            y: states,
-            x: y10.map(v => v - arrowGap),
-            type: 'scatter',
-            mode: 'markers',
-            marker: { size: 7, color: '#555555', symbol: 'triangle-right' },
-            showlegend: false,
-            hoverinfo: 'skip'
-        };
-
-        const data = [traceY2, traceY10, traceArrow];
+        const data = [traceY2, traceY10];
 
         // Build arrow shafts and percentage annotations
         const shapes = [];
         const annotations = [];
 
         for (let i = 0; i < states.length; i++) {
-            // Arrow shaft from Y2 to just before the arrowhead
-            const shaftEnd = y10[i] - arrowGap - 0.08;
-            if (shaftEnd > y2[i]) {
-                shapes.push({
-                    type: 'line',
-                    y0: states[i],
-                    y1: states[i],
-                    x0: y2[i],
-                    x1: shaftEnd,
-                    yref: 'y',
-                    xref: 'x',
-                    line: { color: '#555555', width: 2 }
-                });
-            }
+            // Arrow shaft connecting the two dots edge-to-edge
+            shapes.push({
+                type: 'line',
+                y0: states[i],
+                y1: states[i],
+                x0: y2[i],
+                x1: y10[i],
+                yref: 'y',
+                xref: 'x',
+                line: { color: '#555555', width: 2 }
+            });
 
             // Percentage annotation at the midpoint of the arrow
             const midX = (y2[i] + y10[i]) / 2;
