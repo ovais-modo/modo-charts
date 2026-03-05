@@ -25,7 +25,7 @@
     <div class="chart-wrapper">
         <div class="chart-header">
             <h1><b>SPS</b> and <b>OPPD</b> more than double as 8 of 17 areas exceed <b>20%</b> load growth</h1>
-            <div class="chart-subheader">Peak demand by powerflow area, 2023 ITP Y10 vs 2026 ITP Y10 (MW)</div>
+            <div class="chart-subheader">Peak demand by powerflow area, 2023 ITP 10-year peak vs 2026 ITP 10-year peak (GW)</div>
         </div>
         <div id="chart"></div>
         <div class="chart-footer">
@@ -39,17 +39,17 @@
 
     <script>
         const areas = ['Evergy-EKC','WFEC','Evergy-KCP&L','LES','MIDW','SWPA','Evergy-GMO','WR/Evergy','GRDA','NPPD','AEP-PSO','OGE','OMPA','AEP-SWEPCO','OPPD','SPS'];
-        const itp2023 = [2000, 2900, 3900, 1900, 2800, 1800, 3500, 5500, 1400, 3000, 4400, 5600, 1100, 3700, 1300, 5000];
-        const itp2026 = [2000, 3000, 4000, 2000, 3000, 2000, 4000, 6200, 1700, 3800, 6000, 8000, 1700, 6500, 3000, 11500];
+        const itp2023 = [2.0, 2.9, 3.9, 1.9, 2.8, 1.8, 3.5, 5.5, 1.4, 3.0, 4.4, 5.6, 1.1, 3.7, 1.3, 5.0];
+        const itp2026 = [2.0, 3.0, 4.0, 2.0, 3.0, 2.0, 4.0, 6.2, 1.7, 3.8, 6.0, 8.0, 1.7, 6.5, 3.0, 11.5];
         const growthPct = [0, 3, 3, 5, 7, 11, 13, 13, 21, 26, 36, 42, 55, 76, 129, 130];
 
-        const trace2023 = { y: areas, x: itp2023, name: '2023 ITP Y10', type: 'bar', orientation: 'h', marker: { color: '#467ee4', line: { width: 0 } }, hovertemplate: '%{x:,.0f} MW<extra>2023 ITP Y10</extra>' };
+        const trace2023 = { y: areas, x: itp2023, name: '2023 ITP 10-year peak', type: 'bar', orientation: 'h', marker: { color: '#467ee4', line: { width: 0 } }, hovertemplate: '%{x:.1f} GW<extra>2023 ITP 10-year peak</extra>' };
 
-        const trace2026 = { y: areas, x: itp2026, name: '2026 ITP Y10', type: 'bar', orientation: 'h', marker: { color: '#e85f37', line: { width: 0 } }, text: growthPct.map(p => p > 0 ? `+${p}%` : '0%'), textposition: 'outside', textfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, cliponaxis: false, hovertemplate: '%{x:,.0f} MW<extra>2026 ITP Y10</extra>' };
+        const trace2026 = { y: areas, x: itp2026, name: '2026 ITP 10-year peak', type: 'bar', orientation: 'h', marker: { color: '#e85f37', line: { width: 0 } }, text: growthPct.map(p => p > 0 ? `+${p}%` : '0%'), textposition: 'outside', textfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, cliponaxis: false, hovertemplate: '%{x:.1f} GW<extra>2026 ITP 10-year peak</extra>' };
 
         const data = [trace2023, trace2026];
 
-        const layout = { font: { family: '"DM Sans", sans-serif', color: '#4a4a4a', size: 12 }, paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', margin: { t: 10, r: 60, b: 30, l: 0, pad: 0 }, title: null, barmode: 'group', bargap: 0.2, bargroupgap: 0.05, xaxis: { showgrid: true, gridcolor: '#E8E8E8', gridwidth: 1, showline: false, tickfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, tickcolor: 'rgba(0,0,0,0)', automargin: true, separatethousands: true, range: [0, 14500] }, yaxis: { showgrid: false, showline: false, tickfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, tickcolor: 'rgba(0,0,0,0)', automargin: true }, legend: { orientation: 'h', yanchor: 'bottom', y: 1.02, xanchor: 'left', x: 0, font: { size: 13, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, bgcolor: 'rgba(255,255,255,0)', borderwidth: 0, itemsizing: 'constant', traceorder: 'normal' }, hovermode: 'closest', hoverlabel: { bgcolor: '#333333', font: { family: '"DM Sans", sans-serif', size: 13, color: '#FFFFFF' }, bordercolor: '#333333' } };
+        const layout = { font: { family: '"DM Sans", sans-serif', color: '#4a4a4a', size: 12 }, paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', margin: { t: 10, r: 60, b: 30, l: 0, pad: 0 }, title: null, barmode: 'group', bargap: 0.2, bargroupgap: 0.05, xaxis: { showgrid: true, gridcolor: '#E8E8E8', gridwidth: 1, showline: false, tickfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, tickcolor: 'rgba(0,0,0,0)', automargin: true, separatethousands: true, range: [0, 14.5] }, yaxis: { showgrid: false, showline: false, tickfont: { size: 11, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, tickcolor: 'rgba(0,0,0,0)', automargin: true }, legend: { orientation: 'h', yanchor: 'bottom', y: 1.02, xanchor: 'left', x: 0, font: { size: 13, color: '#4a4a4a', family: '"DM Sans", sans-serif' }, bgcolor: 'rgba(255,255,255,0)', borderwidth: 0, itemsizing: 'constant', traceorder: 'normal' }, hovermode: 'closest', hoverlabel: { bgcolor: '#333333', font: { family: '"DM Sans", sans-serif', size: 13, color: '#FFFFFF' }, bordercolor: '#333333' } };
 
         Plotly.newPlot('chart', data, layout, { responsive: true, displayModeBar: false, staticPlot: false });
 
