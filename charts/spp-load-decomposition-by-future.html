@@ -31,7 +31,7 @@
         <div class="chart-footer">
             <div class="chart-footer-left">
                 <p class="chart-source">Source: SPP 2025 ITP Assessment Report, Figures 3.7, 3.8, 3.10; Modo Energy</p>
-                <p class="chart-note">Note: Existing system base of ~56 GW reflects the approximate Aug 2023 system peak. BR growth is the incremental firm load forecast above the base.</p>
+                <p class="chart-note">Note: Existing system base of ~56 GW reflects the approximate Aug 2023 system peak. Base growth is the incremental firm load forecast above the base.</p>
             </div>
             <div class="chart-wordmark">MODOENERGY</div>
         </div>
@@ -42,7 +42,7 @@
         const totals = [70, 83, 91, 110];
 
         const existing = { x: categories, y: [56, 56, 56, 56], name: 'Existing system', type: 'bar', marker: { color: '#467ee4', line: { width: 0 } }, hovertemplate: '%{y} GW<extra>Existing system</extra>' };
-        const brGrowth = { x: categories, y: [14, 14, 16.1, 16.1], name: 'BR growth', type: 'bar', marker: { color: '#27ac60', line: { width: 0 } }, hovertemplate: '%{y:.1f} GW<extra>BR growth</extra>' };
+        const brGrowth = { x: categories, y: [14, 14, 16.1, 16.1], name: 'Base growth', type: 'bar', marker: { color: '#27ac60', line: { width: 0 } }, hovertemplate: '%{y:.1f} GW<extra>Base growth</extra>' };
         const spotLoads = { x: categories, y: [0, 10.3, 18.9, 29.7], name: 'Spot loads', type: 'bar', marker: { color: '#f7c191', line: { width: 0 } }, hovertemplate: '%{y:.1f} GW<extra>Spot loads</extra>' };
         const f2Adj = { x: categories, y: [0, 2.7, 0, 8.2], name: 'Other F2 adj.', type: 'bar', marker: { color: '#ee7b6f', line: { width: 0 } },
             text: totals.map(t => t + ' GW'), textposition: 'outside', textfont: { size: 13, color: '#333333', family: '"DM Sans", sans-serif', weight: 600 }, cliponaxis: false,
