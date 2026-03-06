@@ -38,11 +38,11 @@
     </div>
 
     <script>
-        // Sorted by Y10 absolute peak load ascending (highest at top). CO, MN, MT, WY excluded.
-        const states =    ['South Dakota','Louisiana','North Dakota','Arkansas','Iowa','New Mexico','Nebraska','Kansas','Texas','Missouri','Oklahoma'];
-        const y2 =        [1.8, 4.0, 2.2, 4.2, 5.2, 3.1, 6.5, 6.2, 5.2, 10.2, 13.2];
-        const y10 =       [3.4, 4.8, 4.8, 5.8, 6.8, 7.2, 8.0, 8.3, 8.5, 11.4, 18.5];
-        const pctGrowth = [89, 20, 118, 38, 31, 132, 23, 34, 63, 12, 40];
+        // Sorted by percentage growth ascending (highest at top). CO, MN, MT, WY excluded.
+        const states =    ['Missouri','Louisiana','Nebraska','Iowa','Kansas','Arkansas','Oklahoma','Texas','South Dakota','North Dakota','New Mexico'];
+        const y2 =        [10.2, 4.0, 6.5, 5.2, 6.2, 4.2, 13.2, 5.2, 1.8, 2.2, 3.1];
+        const y10 =       [11.4, 4.8, 8.0, 6.8, 8.3, 5.8, 18.5, 8.5, 3.4, 4.8, 7.2];
+        const pctGrowth = [12, 20, 23, 31, 34, 38, 40, 63, 89, 118, 132];
 
         // Y2 start dots — hollow circle with blue outline
         const traceY2 = {
